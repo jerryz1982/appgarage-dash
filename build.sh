@@ -5,8 +5,23 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 # Cloners: point these at your own toolchain — set JAVA_HOME / ANDROID_SDK env vars, or edit here.
+# Defaults: Windows/Git-Bash paths; on Linux we fall back to common install locations.
 export JAVA_HOME="${JAVA_HOME:-/c/Program Files/Eclipse Adoptium/jdk-25.0.3.9-hotspot}"
 SDK="${ANDROID_SDK:-/c/Users/raid2/scoop/apps/android-clt/current}"
+case "$(uname -s)" in
+  Linux*|Darwin*)
+    if [ ! -d "$JAVA_HOME" ]; then
+      for j in /usr/lib/jvm/java-21-openjdk-* /usr/lib/jvm/java-17-openjdk-* /usr/lib/jvm/default-java; do
+        [ -d "$j" ] && JAVA_HOME="$j" && break
+      done
+    fi
+    if [ ! -d "$SDK" ]; then
+      for s in "$HOME/Android/Sdk" /opt/android-sdk /usr/lib/android-sdk; do
+        [ -d "$s/build-tools/34.0.0" ] && SDK="$s" && break
+      done
+    fi
+  ;;
+esac
 BT="$SDK/build-tools/34.0.0"
 ANDJAR="$SDK/platforms/android-34/android.jar"
 

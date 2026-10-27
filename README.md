@@ -34,10 +34,14 @@ Two separate questions decide whether it works for you:
    Aftermarket "Tesla-screen" units (Aucar Mk6, JoyeAuto, …) sit in front of the factory unit and take
    over the ports, so the `.epk` has nowhere to land on those either.
 2. **Will the numbers be right?** — that's the *engine*. Calibrated on the **VR30 (3.0t)**. Most gauges
-   are engine-independent and read correctly on any of these cars (RPM, coolant/oil temp, speed, gear,
-   throttle, per-wheel TPMS, G). The engine-specific channels — **oil pressure, power, torque** — are
-   VR30-scaled; on a VQ 3.7 / 2.0t / hybrid they can read wrong or not appear (oil pressure now hides
-   itself when it comes back negative). Frozen gauges that never move mean the unit handed the app no
+   are engine-independent and read correctly on any of these cars (coolant/oil temp, speed, gear,
+   throttle, per-wheel TPMS, G). The engine-specific channels — **RPM, oil pressure, power, torque** —
+   are VR30-scaled; on a VQ 3.7 / 2.0t / hybrid they can read wrong or not appear (oil pressure now hides
+   itself when it comes back negative; on a VQ37 the RPM sensor exists but reads 0 for good — the app
+   re-derives engine speed from **power ÷ torque**, shown as *"RPM · derived"* (verified against the
+   cluster tach on a VQ37); when no derivation is available the RPM arc shows `--` while the speed arc
+   beside it stays live).
+   Frozen gauges that never move mean the unit handed the app no
    live sensors — you'll see a **"NO LIVE CAN DETECTED"** banner in that case.
 
 ## What's new in v1.1
@@ -74,7 +78,8 @@ Raw sensor values are unlabeled floats; these were calibrated against the VR30DD
 | Coolant / Oil temp | 14 / 15 | direct °C | |
 | **Oil pressure** | 16 | raw × 145 → **psi** | ~22 psi warm idle (raw is MPa) |
 | Speed | 17 | raw × 0.621 → **mph** | raw is km/h |
-| Torque | 12 | ≈ Nm | |
+| Distance to empty | 18 | raw × 0.621 → **mi** | raw assumed km; always shown in the bottom row |
+| Torque | 12 | ≈ Nm | live on VQ37 (verified on-car) |
 | Power | 32 | raw × 1.047e-4 → **kW** | raw = rpm × torque |
 | TPMS ×4 | 36–39 | direct **psi** | |
 | Throttle | 23 | % | |
